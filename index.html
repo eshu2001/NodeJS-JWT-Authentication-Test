@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.8/axios.min.js" integrity="sha512-v8+bPcpk4Sj7CKB11+gK/FnsbgQ15jTwZamnBf/xDmiQDcgOIYufBo6Acu1y30vrk8gg5su4x0CG3zfPaq5Fcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="row">Login</h1>
+        
+        <main>
+            <div class="row">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username">
+            </div>
+
+            <div class="row">
+                <label for="password">password</label>
+                <input type="password" name="password" id="password">
+            </div>
+
+            <div class="row">
+                <button onclick="login()">Login</button>
+                <button onclick="getDeshboard()">Get Dashboard</button>
+        </main>
+    </div>
+
+    <script>
+        function login() {
+            const data = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+            axios.post('/api/login', data)
+                .then(response => {
+                    console.log(response);
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+                    if(res && res.data && res.data.success) {
+                       token = res.data.token;
+                       localStorage.setItem('jwt', token);
+                       getDeshboard();
+                    }
+                });
+        }
+
+        function getDeshboard() {
+            const token = localStorage.getItem('jwt');
+            axios.get('/api/deshboard', {
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(response => {
+                if (res && res.data && res.data.success) {
+                   document.querySelector('h1.row').innerHTML = 'Welcome to Deshboard';
+                   document.querySelector('main').innerHTML = res.data.mycontent;
+                }
+            });
+        }
+    </script>
+
+
+</body>
+</html>
