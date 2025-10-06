@@ -68,6 +68,12 @@ app.get('/api/settings', jwtMW, (req, res) => {
   });
 });
 
+if (res.status === 401) {
+  alert("Session expired, please log in again.");
+  window.location.href = "/";
+}
+
+
 
 app.use((err, req, res, next) => {
     if (err.name === 'UnauthorizedError') {
