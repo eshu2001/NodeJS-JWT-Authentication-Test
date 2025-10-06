@@ -29,7 +29,7 @@ app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
     for (let user of users) {
         if (user.username === username && user.password === password) {
-            let token = jwt.sign({ id: user.id,username: user.username }, secretkey, { expiresIn: '7d' });
+            let token = jwt.sign({ id: user.id,username: user.username }, secretkey, { expiresIn: '3m' });
             res.json({
                 success: true,
                 err: null,
@@ -60,6 +60,14 @@ app.get('/api/dashboard',jwtMW, (req, res) => {
 app.get('/', (req, res) => {
     res.sendFile(Path.join(__dirname, 'index.html'));
 });
+
+app.get('/api/settings', jwtMW, (req, res) => {
+  res.json({
+    success: true,
+    mycontent: 'Settings page: only logged-in users can see this.'
+  });
+});
+
 
 app.use((err, req, res, next) => {
     if (err.name === 'UnauthorizedError') {

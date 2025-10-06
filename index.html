@@ -25,6 +25,8 @@
             <div class="row">
                 <button onclick="login()">Login</button>
                 <button onclick="getDeshboard()">Get Dashboard</button>
+                <button id="settingsBtn">Go to Settings</button>
+            </div>
         </main>
     </div>
 
@@ -62,6 +64,38 @@
             });
         }
     </script>
+
+    <script>
+  document.getElementById("settingsBtn").addEventListener("click", function() {
+    history.pushState({}, "", "/settings");
+    loadSettingsPage();
+  });
+
+  function loadSettingsPage() {
+    const token = localStorage.getItem("token");
+
+    fetch("http://localhost:3000/api/settings", {
+      headers: { "Authorization": "Bearer " + token }
+    })
+      .then(res => {
+        if (res.status === 401) {
+          window.location.href = "/";
+          return;
+        }
+        return res.json();
+      })
+      .then(data => {
+        if (data) {
+          document.body.innerHTML = `
+            <h1>Settings</h1>
+            <p>${data.mycontent}</p>
+            <button onclick="window.location.href='/'">Home</button>
+          `;
+        }
+      })
+      .catch(() => window.location.href = "/");
+  }
+</script>
 
 
 </body>
